@@ -54,7 +54,7 @@ define Device/alfa-network_tube-e4g
   DEVICE_VENDOR := ALFA Network
   DEVICE_MODEL := Tube-E4G
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci uboot-envtools uqmi -iwinfo \
-	-kmod-rt2800-soc -wpad-openssl
+	-kmod-rt2800-soc -wpad-basic-wolfssl
   SUPPORTED_DEVICES += tube-e4g
 endef
 TARGET_DEVICES += alfa-network_tube-e4g
@@ -129,6 +129,15 @@ define Device/bdcom_wap2100-sk
 	kmod-sdhci-mt7620 kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += bdcom_wap2100-sk
+
+define Device/bolt_bl201
+  SOC := mt7620a
+  IMAGE_SIZE := 15872k
+  DEVICE_VENDOR := Bolt
+  DEVICE_MODEL := BL201
+  DEVICE_PACKAGES := kmod-mt76x2
+endef
+TARGET_DEVICES += bolt_bl201
 
 define Device/buffalo_whr-1166d
   SOC := mt7620a
@@ -327,7 +336,7 @@ define Device/edimax_br-6478ac-v2
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN68 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci \
 	kmod-usb-ledtrig-usbport
 endef
@@ -341,7 +350,7 @@ define Device/edimax_ew-7476rpc
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN79 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-phy-realtek
 endef
 TARGET_DEVICES += edimax_ew-7476rpc
@@ -354,7 +363,7 @@ define Device/edimax_ew-7478ac
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN70 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-phy-realtek
 endef
 TARGET_DEVICES += edimax_ew-7478ac
@@ -367,7 +376,7 @@ define Device/edimax_ew-7478apc
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN75 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci \
 	kmod-usb-ledtrig-usbport
 endef
@@ -407,7 +416,7 @@ define Device/fon_fon2601
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci
   KERNEL_INITRAMFS := $$(KERNEL) | uimage-padhdr
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | uimage-padhdr | \
-	pad-rootfs | append-metadata | check-size
+	pad-rootfs | check-size | append-metadata
 endef
 TARGET_DEVICES += fon_fon2601
 
@@ -482,6 +491,26 @@ define Device/hiwifi_hc5861
   SUPPORTED_DEVICES += hc5861
 endef
 TARGET_DEVICES += hiwifi_hc5861
+
+define Device/hiwifi_r33
+  SOC := mt7620a
+  DEVICE_VENDOR := HiWiFi
+  DEVICE_MODEL := R33
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport \
+	kmod-switch-rtl8366-smi kmod-switch-rtl8367b kmod-mt76x2
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 4096k
+  UBINIZE_OPTS := -E 5
+  IMAGE_SIZE := 32768k
+  IMAGES += kernel.bin rootfs.bin factory.bin
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  IMAGE/kernel.bin := append-kernel | check-size $$$$(KERNEL_SIZE)
+  IMAGE/rootfs.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | \
+	check-size
+endef
+TARGET_DEVICES += hiwifi_r33
 
 define Device/hnet_c108
   SOC := mt7620a
@@ -1010,20 +1039,6 @@ define Device/tplink_archer-c2-v1
 endef
 TARGET_DEVICES += tplink_archer-c2-v1
 
-define Device/tplink_archer-c5-v4
-  $(Device/tplink-v2)
-  SOC := mt7620a
-  TPLINK_FLASHLAYOUT := 8Mmtk
-  TPLINK_HWID := 0x04DA857C
-  TPLINK_HWREV := 0x0C000600
-  TPLINK_HWREVADD := 0x04000000
-  IMAGES += factory.bin
-  DEVICE_MODEL := Archer C5
-  DEVICE_VARIANT := v4
-  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport kmod-mt76x2 kmod-switch-rtl8367b
-endef
-TARGET_DEVICES += tplink_archer-c5-v4
-
 define Device/tplink_archer-c50-v1
   $(Device/tplink-v2)
   SOC := mt7620a
@@ -1145,14 +1160,26 @@ define Device/xiaomi_miwifi-r3
   IMAGE_SIZE := 32768k
   UBINIZE_OPTS := -E 5
   IMAGES += kernel1.bin rootfs0.bin
-  IMAGE/kernel1.bin := append-kernel | check-size
-  IMAGE/rootfs0.bin := append-ubi | check-size
+  IMAGE/kernel1.bin := append-kernel | check-size $$$$(KERNEL_SIZE)
+  IMAGE/rootfs0.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   DEVICE_VENDOR := Xiaomi
   DEVICE_MODEL := Mi Router R3
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci uboot-envtools
 endef
 TARGET_DEVICES += xiaomi_miwifi-r3
+
+define Device/youku_x2
+  SOC := mt7620a
+  IMAGE_SIZE := 16064k
+  DEVICE_VENDOR := Youku
+  DEVICE_MODEL := X2
+  DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci \
+	kmod-sdhci-mt7620 kmod-usb-ledtrig-usbport
+  UIMAGE_MAGIC := 0x12291000
+  UIMAGE_NAME := 400000000000000000001000
+endef
+TARGET_DEVICES += youku_x2
 
 define Device/youku_yk-l1
   SOC := mt7620a
@@ -1162,6 +1189,8 @@ define Device/youku_yk-l1
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
 	kmod-usb-ledtrig-usbport
   SUPPORTED_DEVICES += youku-yk1 youku,yk1
+  UIMAGE_MAGIC := 0x12291000
+  UIMAGE_NAME := 400000000000000000000000
 endef
 TARGET_DEVICES += youku_yk-l1
 
@@ -1172,6 +1201,8 @@ define Device/youku_yk-l1c
   DEVICE_MODEL := YK-L1c
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
 	kmod-usb-ledtrig-usbport
+  UIMAGE_MAGIC := 0x12291000
+  UIMAGE_NAME := 400000000000000000000000
 endef
 TARGET_DEVICES += youku_yk-l1c
 

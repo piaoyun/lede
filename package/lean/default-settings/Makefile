@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2017 GitHub 
+# Copyright (C) 2016-2023 GitHub 
 #
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
@@ -7,12 +7,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=default-settings
-PKG_VERSION:=2
-PKG_RELEASE:=15
+PKG_VERSION:=3
+PKG_RELEASE:=6
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=LICENSE
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -26,9 +24,6 @@ endef
 
 define Package/default-settings/description
 	Language Support Packages.
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

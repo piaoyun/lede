@@ -171,12 +171,19 @@ define Device/hilink_hlk-7688a
 endef
 TARGET_DEVICES += hilink_hlk-7688a
 
+define Device/hiwifi_hc5611
+  IMAGE_SIZE := 15808k
+  DEVICE_VENDOR := HiWiFi
+  DEVICE_MODEL := HC5611
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci
+endef
+TARGET_DEVICES += hiwifi_hc5611
+
 define Device/hiwifi_hc5661a
   IMAGE_SIZE := 15808k
   DEVICE_VENDOR := HiWiFi
   DEVICE_MODEL := HC5661A
   SUPPORTED_DEVICES += hc5661a
-  DEVICE_PACKAGES := kmod-sdhci-mt7620
 endef
 TARGET_DEVICES += hiwifi_hc5661a
 
@@ -184,7 +191,7 @@ define Device/hiwifi_hc5761a
   IMAGE_SIZE := 15808k
   DEVICE_VENDOR := HiWiFi
   DEVICE_MODEL := HC5761A
-  DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620
+  DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-ohci
 endef
 TARGET_DEVICES += hiwifi_hc5761a
 
@@ -270,6 +277,15 @@ define Device/mercury_mac1200r-v2
 endef
 TARGET_DEVICES += mercury_mac1200r-v2
 
+define Device/minew_g1-c
+  IMAGE_SIZE := 15744k
+  DEVICE_VENDOR := Minew
+  DEVICE_MODEL := G1-C
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport kmod-usb-serial-cp210x
+  SUPPORTED_DEVICES += minew-g1c
+endef
+TARGET_DEVICES += minew_g1-c
+
 define Device/netgear_r6020
   $(Device/netgear_sercomm_nor)
   IMAGE_SIZE := 7104k
@@ -308,6 +324,15 @@ define Device/netgear_r6120
   SERCOMM_PAD := 576k
 endef
 TARGET_DEVICES += netgear_r6120
+
+define Device/nradio_wt6285
+  IMAGE_SIZE := 15808k
+  DEVICE_VENDOR := NRadio
+  DEVICE_MODEL := WT6285
+  DEVICE_PACKAGES := kmod-usb-net-cdc-ether kmod-usb-serial-option usb-modeswitch
+  SUPPORTED_DEVICES += wt6285
+endef
+TARGET_DEVICES += nradio_wt6285
 
 define Device/onion_omega2
   IMAGE_SIZE := 16064k
@@ -534,6 +559,22 @@ define Device/tplink_tl-mr6400-v4
   IMAGE/tftp-recovery.bin := pad-extra 128k | $$(IMAGE/factory.bin)
 endef
 TARGET_DEVICES += tplink_tl-mr6400-v4
+
+define Device/tplink_tl-mr6400-v5
+  $(Device/tplink-v2)
+  IMAGE_SIZE := 7808k
+  DEVICE_MODEL := TL-MR6400
+  DEVICE_VARIANT := v5
+  TPLINK_FLASHLAYOUT := 8Mmtk
+  TPLINK_HWID := 0x64000005
+  TPLINK_HWREV := 0x5
+  TPLINK_HWREVADD := 0x5
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport \
+	kmod-usb-serial-option kmod-usb-net-qmi-wwan uqmi
+  IMAGES := sysupgrade.bin tftp-recovery.bin
+  IMAGE/tftp-recovery.bin := pad-extra 128k | $$(IMAGE/factory.bin)
+endef
+TARGET_DEVICES += tplink_tl-mr6400-v5
 
 define Device/tplink_tl-wa801nd-v5
   $(Device/tplink-v2)
@@ -774,14 +815,15 @@ define Device/wrtnode_wrtnode2r
 endef
 TARGET_DEVICES += wrtnode_wrtnode2r
 
-define Device/xiaomi_mir4a-100m
+define Device/xiaomi_mi-router-4a-100m
   IMAGE_SIZE := 14976k
   DEVICE_VENDOR := Xiaomi
   DEVICE_MODEL := Mi Router 4A
   DEVICE_VARIANT := 100M Edition
   DEVICE_PACKAGES := kmod-mt76x2
+  SUPPORTED_DEVICES += xiaomi,mir4a-100m
 endef
-TARGET_DEVICES += xiaomi_mir4a-100m
+TARGET_DEVICES += xiaomi_mi-router-4a-100m
 
 define Device/xiaomi_mi-router-4c
   IMAGE_SIZE := 14976k

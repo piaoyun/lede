@@ -10,6 +10,12 @@ platform_check_image() {
 
 platform_do_upgrade() {
 	case "$(board_name)" in
+	zyxel,nbg7815|\
+	qnap,301w)
+		kernelname="0:HLOS"
+		rootfsname="rootfs"
+		mmc_do_upgrade "$1"
+		;;
 	redmi,ax6|\
 	xiaomi,ax3600|\
 	xiaomi,ax9000)
@@ -36,6 +42,13 @@ platform_do_upgrade() {
 		# Reset success flag
 		fw_setenv flag_boot_success 0
 
+		nand_do_upgrade "$1"
+		;;
+	zte,mf269)
+		nand_do_upgrade "$1"
+		;;
+	tplink,tl-er2260t|\
+	tplink,xtr10890)
 		nand_do_upgrade "$1"
 		;;
 	*)
